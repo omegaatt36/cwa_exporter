@@ -2,8 +2,8 @@ github.com/VictoriaMetrics/metrics v1.42.0 h1:t/OGs3BjMUYhxw/h83Z28qAss8DuA4QEVw
 github.com/VictoriaMetrics/metrics v1.42.0/go.mod h1:xDM82ULLYCYdFRgQ2JBxi8Uf1+8En1So9YUwlGTOqTc=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/omegaatt36/go-cwa v0.1.0 h1:E7d7oaWQwMZXnMx5rB9qtQpNkLb1RL7gHY5s1Fe8Kr8=
-github.com/omegaatt36/go-cwa v0.1.0/go.mod h1:czukIpTIXjyDtekHOqz9/b8C4rsgwcyOal316/8wM6Q=
+github.com/omegaatt36/go-cwa v0.1.1 h1:IIubYDBEF3SFk18WGMq1BkBY20abt4biwIM6A68+/ws=
+github.com/omegaatt36/go-cwa v0.1.1/go.mod h1:czukIpTIXjyDtekHOqz9/b8C4rsgwcyOal316/8wM6Q=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=

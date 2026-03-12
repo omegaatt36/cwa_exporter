@@ -30,19 +30,18 @@ func (c *Collector) StartPoller(ctx context.Context) {
 	ticker := time.NewTicker(c.config.PollInterval)
 	defer ticker.Stop()
 
-	c.fetchAndSetMetrics(ctx)
-
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			c.fetchAndSetMetrics(ctx)
+			c.Collect(ctx)
 		}
 	}
 }
 
-func (c *Collector) fetchAndSetMetrics(ctx context.Context) {
+// Collect fetches and sets weather metrics.
+func (c *Collector) Collect(ctx context.Context) {
 	params := &cwa.Forecast36hParams{}
 	if len(c.config.Counties) > 0 {
 		counties := make([]cwa.County, len(c.config.Counties))
@@ -63,34 +62,34 @@ func (c *Collector) fetchAndSetMetrics(ctx context.Context) {
 		return
 	}
 
+	locationCount := len(resp.Records.Location)
+	log.Printf("Successfully fetched data for %d locations", locationCount)
+
 	for _, location := range resp.Records.Location {
 		county := location.LocationName
 		for _, element := range location.WeatherElement {
-			if len(element.Time) == 0 {
-				continue
-			}
-			// Use the first forecast period (usually the current or next one)
-			t := element.Time[0]
-			param := t.Parameter
+			for i, t := range element.Time {
+				param := t.Parameter
 
-			switch element.ElementName {
-			case "Wx":
-				// cwa_weather_condition_info{county="...", condition="..."}
-				metrics.GetOrCreateFloatCounter(fmt.Sprintf(`cwa_weather_condition_info{county="%s", condition="%s"}`, county, param.ParameterName)).Set(1)
-			case "PoP":
-				// cwa_precipitation_probability_percent{county="..."}
-				if val, err := strconv.ParseFloat(param.ParameterName, 64); err == nil {
-					metrics.GetOrCreateFloatCounter(fmt.Sprintf(`cwa_precipitation_probability_percent{county="%s"}`, county)).Set(val)
-				}
-			case "MaxT":
-				// cwa_temperature_celsius{county="...", type="MaxT"}
-				if val, err := strconv.ParseFloat(param.ParameterName, 64); err == nil {
-					metrics.GetOrCreateFloatCounter(fmt.Sprintf(`cwa_temperature_celsius{county="%s", type="MaxT"}`, county)).Set(val)
-				}
-			case "MinT":
-				// cwa_temperature_celsius{county="...", type="MinT"}
-				if val, err := strconv.ParseFloat(param.ParameterName, 64); err == nil {
-					metrics.GetOrCreateFloatCounter(fmt.Sprintf(`cwa_temperature_celsius{county="%s", type="MinT"}`, county)).Set(val)
+				startTime := t.StartTime
+				endTime := t.EndTime
+				label := fmt.Sprintf(`county="%s", period="%d", start_time="%s", end_time="%s"`, county, i, startTime, endTime)
+
+				switch element.ElementName {
+				case "Wx":
+					metrics.GetOrCreateFloatCounter(fmt.Sprintf(`cwa_weather_condition_info{%s, condition="%s"}`, label, param.ParameterName)).Set(1)
+				case "PoP":
+					if val, err := strconv.ParseFloat(param.ParameterName, 64); err == nil {
+						metrics.GetOrCreateFloatCounter(fmt.Sprintf(`cwa_precipitation_probability_percent{%s}`, label)).Set(val)
+					}
+				case "MaxT":
+					if val, err := strconv.ParseFloat(param.ParameterName, 64); err == nil {
+						metrics.GetOrCreateFloatCounter(fmt.Sprintf(`cwa_temperature_celsius{%s, type="MaxT"}`, label)).Set(val)
+					}
+				case "MinT":
+					if val, err := strconv.ParseFloat(param.ParameterName, 64); err == nil {
+						metrics.GetOrCreateFloatCounter(fmt.Sprintf(`cwa_temperature_celsius{%s, type="MinT"}`, label)).Set(val)
+					}
 				}
 			}
 		}

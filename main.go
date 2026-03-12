@@ -53,7 +53,7 @@ func NewAppCommand() *cli.Command {
 				Name:        "poll-interval",
 				Usage:       "Interval between polls",
 				Sources:     cli.EnvVars("CWA_POLL_INTERVAL"),
-				Value:       30 * time.Minute,
+				Value:       10 * time.Minute,
 				Destination: &cfg.PollInterval,
 			},
 			&cli.StringFlag{
@@ -84,13 +84,16 @@ func runExporter(ctx context.Context, config *Config) error {
 	client := cwa.NewClient(config.APIKey)
 	collector := NewCollector(client, config)
 
+	log.Println("Performing initial data fetch...")
+	collector.Collect(ctx)
+
 	go collector.StartPoller(ctx)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /metrics", func(w http.ResponseWriter, r *http.Request) {
 		metrics.WritePrometheus(w, false)
 	})
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})

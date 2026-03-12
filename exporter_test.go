@@ -74,7 +74,7 @@ func TestCollector_fetchAndSetMetrics(t *testing.T) {
 	}
 
 	collector := NewCollector(client, config)
-	collector.fetchAndSetMetrics(context.Background())
+	collector.Collect(context.Background())
 
 	// Verify metrics
 	var buf bytes.Buffer
@@ -82,10 +82,10 @@ func TestCollector_fetchAndSetMetrics(t *testing.T) {
 	output := buf.String()
 
 	expectedMetrics := []string{
-		`cwa_weather_condition_info{county="Taipei", condition="Cloudy"} 1`,
-		`cwa_precipitation_probability_percent{county="Taipei"} 20`,
-		`cwa_temperature_celsius{county="Taipei", type="MaxT"} 25`,
-		`cwa_temperature_celsius{county="Taipei", type="MinT"} 18`,
+		`cwa_weather_condition_info{county="Taipei", period="0", condition="Cloudy"} 1`,
+		`cwa_precipitation_probability_percent{county="Taipei", period="0"} 20`,
+		`cwa_temperature_celsius{county="Taipei", period="0", type="MaxT"} 25`,
+		`cwa_temperature_celsius{county="Taipei", period="0", type="MinT"} 18`,
 		`cwa_last_fetch_success_timestamp_seconds`,
 	}
 

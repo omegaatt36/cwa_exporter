@@ -41,8 +41,8 @@ func TestConfigFlags(t *testing.T) {
 				if len(cfg.Counties) != 0 {
 					t.Errorf("Counties: expected empty, got %v", cfg.Counties)
 				}
-				if cfg.PollInterval != 30*time.Minute {
-					t.Errorf("PollInterval: expected 30m, got %v", cfg.PollInterval)
+				if cfg.PollInterval != 10*time.Minute {
+					t.Errorf("PollInterval: expected 10m, got %v", cfg.PollInterval)
 				}
 				if cfg.ListenAddr != ":9100" {
 					t.Errorf("ListenAddr: expected :9100, got %s", cfg.ListenAddr)

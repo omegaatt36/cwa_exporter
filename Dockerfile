@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -o cwa-exporter .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o cwa-exporter .
 
-FROM gcr.io/distroless/static-debian12
+FROM gcr.io/distroless/static-debian13
 
 COPY --from=builder /app/cwa-exporter /
 

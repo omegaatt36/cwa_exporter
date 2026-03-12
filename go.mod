@@ -4,7 +4,7 @@ go 1.26.1
 
 require (
 	github.com/VictoriaMetrics/metrics v1.42.0
-	github.com/omegaatt36/go-cwa v0.1.0
+	github.com/omegaatt36/go-cwa v0.1.1
 	github.com/urfave/cli/v3 v3.7.0
 )
 
